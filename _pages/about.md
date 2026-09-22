@@ -18,7 +18,7 @@ latest_posts:
   enabled: false
 ---
 
-I am a master's student at the School of Mathematical Sciences, Peking University, advised by Dongyan Zhao.
+I am a master's student in Big Data at the School of Mathematical Sciences, Peking University, advised by [Dongyan Zhao](https://www.wict.pku.edu.cn/zhaodongyan/). Before joining PKU, I earned a bachelor's degree in Mathematics.
 
 My research interests include Large Language Models and Reinforcement Learning, with a particular focus on applications of probability theory in these areas.
 
