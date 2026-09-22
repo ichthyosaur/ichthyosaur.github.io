@@ -1,0 +1,103 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> Why Token-Mean Aggregation Is Asymptotically Unbiased | Jiayan Fu </title> <meta name="author" content="Jiayan Fu"> <meta name="description" content="How the law of large numbers explains the asymptotic unbiasedness of token-mean aggregation, up to a positive gradient scale."> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="/assets/img/github-favicon.svg?v=6d802f68df0c09a4997cfd28eeafd9ff"> <link rel="stylesheet" href="/assets/css/main.css?v=3116ba77db9ee1581d05bb3e86fbf7f1"> <link rel="canonical" href="https://ichthyosaur.github.io/blog/2026/token-mean-policy-gradient/"> <script src="/assets/js/theme.js?v=5286c3e4c334d0ecb8fc0c40ff4fa7ec"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Jiayan</span> Fu </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">About </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">Blog <span class="sr-only">(current)</span> </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">Publications </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">Why Token-Mean Aggregation Is Asymptotically Unbiased</h1> <p class="post-meta"> Created on May 27, 2026 </p> <p class="post-tags"> <a href="/blog/2026"> <i class="fa-solid fa-calendar fa-sm"></i> 2026 </a>   ·   <a href="/blog/tag/reinforcement-learning"> <i class="fa-solid fa-hashtag fa-sm"></i> Reinforcement Learning</a>   <a href="/blog/tag/llm"> <i class="fa-solid fa-hashtag fa-sm"></i> LLM</a>   <a href="/blog/tag/dapo"> <i class="fa-solid fa-hashtag fa-sm"></i> DAPO</a>   <a href="/blog/tag/grpo"> <i class="fa-solid fa-hashtag fa-sm"></i> GRPO</a>   ·   <a href="/blog/category/research-notes"> <i class="fa-solid fa-tag fa-sm"></i> Research Notes</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p>One change introduced by DAPO is to replace GRPO’s sequence-mean-token-mean reduction with a token-level mean: sum the token losses across responses, then divide by the total number of tokens (<a href="#ref-dapo">Yu et al., 2025</a>, Section 3.3). The original GRPO objective instead averages within each response before averaging across responses (<a href="#ref-grpo">Shao et al., 2024</a>, Section 4.1).</p> <p>Why should token-mean aggregation better preserve the policy-gradient direction? Its denominator is random, so the answer is not immediately obvious.</p> <p>The key trick is simple: divide both the numerator and denominator by the number of rollouts. The law of large numbers then turns the ratio into an expected gradient divided by an expected length.</p> <p><strong>Token-mean aggregation is asymptotically unbiased for the policy gradient up to a positive scale factor</strong>, under the integrability conditions stated below. The following derivation explains why.</p> <h2 id="the-gradient-we-want-to-estimate">The gradient we want to estimate</h2> <p>Fix a prompt \(x\) and a policy parameter \(\theta\). Let a response be \(\tau\), with length \(L=\lvert\tau\rvert\geq 1\), and write its probability as \(p_\theta(\tau\mid x)\). The state \(s_t\) includes the prompt and preceding tokens. The trajectory includes all sampled actions, including termination where applicable.</p> <p>Our objective is the expected sequence reward,</p> \[J_x(\theta)=\mathbb{E}_{\tau\sim p_\theta(\cdot\mid x)}[R(\tau)].\] <p>Assume the reward has no explicit parameter dependence and the usual conditions for interchanging differentiation and expectation hold. The score-function identity underlying REINFORCE (<a href="#ref-reinforce">Williams, 1992</a>) gives</p> \[\begin{aligned} \nabla_\theta J_x(\theta) &amp;=\sum_\tau R(\tau)\nabla_\theta p_\theta(\tau\mid x)\\ &amp;=\mathbb{E}\!\left[R(\tau)\nabla_\theta\log p_\theta(\tau\mid x)\right]\\ &amp;=\mathbb{E}\!\left[R(\tau)\sum_{t=1}^{L}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\right]. \end{aligned}\] <p>We can subtract a response-independent baseline \(b(x)\) because the expected trajectory score is zero. With \(A(\tau)=R(\tau)-b(x)\), define the response’s <strong>total token-gradient contribution</strong> as</p> \[S(\tau)=A(\tau)\sum_{t=1}^{L}\nabla_\theta\log\pi_\theta(a_t\mid s_t).\] <p>Then</p> \[\boxed{\nabla_\theta J_x(\theta)=\mathbb{E}[S].}\] <p>The sequence-level advantage is held fixed when differentiating the surrogate loss. An arbitrary normalized or sample-dependent advantage need not satisfy this identity; the baseline assumption here makes the target precise. I also set aside clipping, off-policy updates, and regularization to isolate aggregation. All expressions below use the gradient-ascent convention.</p> <h2 id="token-mean-a-ratio-of-sample-averages">Token-mean: a ratio of sample averages</h2> <p>Sample \(N\) independent responses at the fixed policy, with contributions \(S_i=S(\tau_i)\) and lengths \(L_i\). Token-mean aggregation gives</p> \[\widehat g_{\mathrm{TM}} =\frac{\sum_{i=1}^{N}S_i}{\sum_{i=1}^{N}L_i} =\frac{\frac{1}{N}\sum_{i=1}^{N}S_i} {\frac{1}{N}\sum_{i=1}^{N}L_i}.\] <p>Assume \(\mathbb{E}\|S\|&lt;\infty\) and \(0&lt;\mathbb{E}[L]&lt;\infty\). By the strong law of large numbers,</p> \[\frac{1}{N}\sum_{i=1}^{N}S_i\xrightarrow{\mathrm{a.s.}}\mathbb{E}[S], \qquad \frac{1}{N}\sum_{i=1}^{N}L_i\xrightarrow{\mathrm{a.s.}}\mathbb{E}[L].\] <p>Continuity of division at a positive denominator therefore yields</p> \[\boxed{ \widehat g_{\mathrm{TM}} \xrightarrow{\mathrm{a.s.}} \frac{\mathbb{E}[S]}{\mathbb{E}[L]} =\frac{1}{\mathbb{E}[L]}\nabla_\theta J_x(\theta). }\] <p>Using the weak law and Slutsky’s theorem gives the corresponding convergence-in-probability statement; see <a href="#ref-convergence">van der Vaart (1998), Chapter 2</a>.</p> <p>At a fixed policy, \(1/\mathbb{E}[L]\) is a deterministic positive scalar. Whenever the true gradient is nonzero, the limiting update points in exactly the same direction. The random denominator has become a scale factor in the limit.</p> <p>There is also a useful finite-batch observation:</p> \[\widehat g_{\mathrm{TM}} =\frac{N}{\sum_i L_i}\left(\frac{1}{N}\sum_i S_i\right).\] <p>For any realized batch, token-mean has exactly the same direction as that batch’s sequence-averaged <strong>sum</strong> of token gradients. It scales the whole batch together instead of weighting individual responses by their inverse lengths.</p> <h2 id="asymptotic-unbiasedness">Asymptotic unbiasedness</h2> <p>To express the result in terms of expected gradients, assume additionally that \(\mathbb{E}\|S\|^2&lt;\infty\). Since \(L_i\geq 1\),</p> \[\|\widehat g_{\mathrm{TM}}\|^2 \leq \left(\frac{1}{N}\sum_{i=1}^N\|S_i\|\right)^2 \leq \frac{1}{N}\sum_{i=1}^N\|S_i\|^2.\] <p>Thus the estimators have uniformly bounded second moments and are uniformly integrable. Together with the convergence above, this gives</p> \[\boxed{ \lim_{N\to\infty}\mathbb{E}[\widehat g_{\mathrm{TM}}] =\frac{1}{\mathbb{E}[L]}\nabla_\theta J_x(\theta). }\] <p>This is the sense in which <strong>token-mean is asymptotically unbiased</strong>: its expected update approaches the true policy gradient multiplied by the positive scalar \(1/\mathbb{E}[L]\). This scalar changes the gradient magnitude without changing its direction. Finite batches can still have ratio-estimation bias.</p> <h2 id="where-sequence-mean-token-mean-changes-the-target">Where sequence-mean-token-mean changes the target</h2> <p>Averaging token gradients within each response first gives</p> \[\widehat g_{\mathrm{SM}} =\frac{1}{N}\sum_{i=1}^{N}\frac{S_i}{L_i} \xrightarrow{\mathrm{a.s.}}\mathbb{E}\!\left[\frac{S}{L}\right].\] <p>In general,</p> \[\mathbb{E}\!\left[\frac{S}{L}\right] \neq\frac{\mathbb{E}[S]}{\mathbb{E}[L]},\] <p>and the two vectors need not even be parallel. Each response’s contribution is reweighted by its own inverse length. When length and gradient contribution are related, this can change the update direction even with infinitely many samples. This is the response-length weighting problem analyzed by <a href="#ref-dr-grpo">Liu et al. (2025), Section 3.1</a>.</p> <h2 id="scope-of-the-conclusion">Scope of the conclusion</h2> <p>The argument supports a precise claim: <strong>a shared token-count denominator preserves the underlying population gradient direction in the large-sample limit, provided the numerator already estimates that gradient.</strong> It does not make every part of GRPO or DAPO unbiased.</p> <p>Two details matter when applying this to training:</p> <ul> <li> <strong>Expected length depends on the policy.</strong> The scale \(1/\mathbb{E}_\theta[L]\) is constant with respect to rollout randomness at a fixed \(\theta\), but can change during training. The update derived here is not generally \(\nabla_\theta(J_x/\mathbb{E}_\theta[L])\), which would include a derivative of expected length.</li> <li> <strong>The scope of the denominator matters.</strong> With independent prompt-response pairs from a fixed prompt distribution and one shared batch denominator, the same reasoning gives \(\mathbb{E}_{x,\tau}[S]/\mathbb{E}_{x,\tau}[L]\). Normalizing each prompt separately and then averaging instead gives \(\mathbb{E}_x[\nabla J_x/\mathbb{E}[L\mid x]]\) in the per-prompt large-group limit, which can reweight prompts and change the overall direction.</li> </ul> <p>Group-normalized advantages, dynamic sampling, and clipped surrogate losses introduce further effects beyond this calculation. The useful insight is specifically about aggregation: replacing individual inverse-length weights with one shared denominator removes that source of relative response weighting, with asymptotic unbiasedness up to a positive scale under the stated assumptions.</p> <h2 id="references">References</h2> <ol> <li> <p><span id="ref-dapo"></span>Qiying Yu et al. <strong>DAPO: An Open-Source LLM Reinforcement Learning System at Scale.</strong> 2025. <a href="https://arxiv.org/abs/2503.14476" rel="external nofollow noopener" target="_blank">arXiv:2503.14476</a>. Section 3.3 introduces the token-level policy-gradient loss.</p> </li> <li> <p><span id="ref-grpo"></span>Zhihong Shao et al. <strong>DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models.</strong> 2024. <a href="https://arxiv.org/abs/2402.03300" rel="external nofollow noopener" target="_blank">arXiv:2402.03300</a>. Section 4.1 presents the original GRPO objective.</p> </li> <li> <p><span id="ref-reinforce"></span>Ronald J. Williams. <strong>Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning.</strong> <em>Machine Learning</em>, 8, 229–256, 1992. <a href="https://doi.org/10.1007/BF00992696" rel="external nofollow noopener" target="_blank">doi:10.1007/BF00992696</a>.</p> </li> <li> <p><span id="ref-convergence"></span>A. W. van der Vaart. <strong>Asymptotic Statistics.</strong> Cambridge University Press, 1998. <a href="https://www.cambridge.org/core/books/abs/asymptotic-statistics/stochastic-convergence/106715490302CD0E35765E8BDE5CE514" rel="external nofollow noopener" target="_blank">Chapter 2, “Stochastic Convergence”</a>. Background on stochastic convergence, continuous mappings, and Slutsky’s lemma.</p> </li> <li> <p><span id="ref-dr-grpo"></span>Zichen Liu et al. <strong>Understanding R1-Zero-Like Training: A Critical Perspective.</strong> 2025. <a href="https://arxiv.org/abs/2503.20783" rel="external nofollow noopener" target="_blank">arXiv:2503.20783</a>. Sections 3.1–3.2 discuss length bias and fixed normalization in Dr. GRPO.</p> </li> </ol> </div> </article> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Jiayan Fu. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "About",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "Blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "Publications",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "post-why-normalize-grpo-advantages-a-variance-stabilizing-perspective",
+        
+          title: "Why Normalize GRPO Advantages? A Variance-Stabilizing Perspective",
+        
+        description: "Connecting GRPO&#39;s standard-deviation normalization to a minimax variance-stabilizing transformation of binary success rates.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/grpo-variance-stabilization/";
+          
+        },
+      },{id: "post-why-token-mean-aggregation-is-asymptotically-unbiased",
+        
+          title: "Why Token-Mean Aggregation Is Asymptotically Unbiased",
+        
+        description: "How the law of large numbers explains the asymptotic unbiasedness of token-mean aggregation, up to a positive gradient scale.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/token-mean-policy-gradient/";
+          
+        },
+      },{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%66%75%6A%69%61%79%61%6E@%6C%69%76%65.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/ichthyosaur", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>
