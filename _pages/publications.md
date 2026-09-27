@@ -8,7 +8,8 @@ nav_order: 2
 
 {% capture paper_count %}{% bibliography_count %}{% endcapture %}
 {% assign paper_count = paper_count | plus: 0 %}
-{% if paper_count > 0 %}
+{% if paper_count > 0 %} \* Equal contribution · † Corresponding authors
+
 {% include bib_search.liquid %}
 
   <div class="publications">

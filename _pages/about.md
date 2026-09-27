@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: School of Mathematical Sciences, Peking University
+subtitle: "<strong>School of Mathematical Sciences, Peking University</strong>"
 
 profile:
   align: right
@@ -20,9 +20,15 @@ latest_posts:
 
 I am a master's student in Big Data at the School of Mathematical Sciences, Peking University, advised by [Dongyan Zhao](https://www.wict.pku.edu.cn/zhaodongyan/). Before joining PKU, I earned a bachelor's degree in Mathematics.
 
-My research interests include Large Language Models and Reinforcement Learning, with a particular focus on applications of probability theory in these areas.
+My research interests include Large Language Models and Reinforcement Learning, with a particular focus on applications of probability theory in these areas. Before shifting my focus to AI, my main interests in mathematics were analysis and probability theory.
 
-You can reach me at [fujiayan@live.com](mailto:fujiayan@live.com) or find me on [GitHub](https://github.com/ichthyosaur).
+My recent work mainly focuses on credit assignment in long-horizon tasks.
+
+I am always happy to discuss research ideas in reinforcement learning for LLMs. You can reach me at [fujiayan@live.com](mailto:fujiayan@live.com).
+
+## Selected Publications
+
+{% include selected_papers.liquid %}
 
 ## Selected Blogs
 

@@ -89,3 +89,9 @@ All seven `test/integration_*.sh` scripts are gated by `unit-tests.yml`; run the
 - `.agents/skills/al-folio-bootstrap/SKILL.md` — new-site setup workflow.
 - `.agents/skills/al-folio-v1-migration/SKILL.md` — customized-fork migration and override drift auditing.
 - `.codex/skills` and `.claude/skills` are symlinks to `.agents/skills` for agent-specific discovery.
+
+## Personal publication conventions
+
+- Keep publication entries in `_bibliography/papers.bib`. Add a paper to homepage Selected Publications (`selected = {true}`) only when the user explicitly requests it; otherwise use `selected = {false}`.
+- Mark corresponding authors with `†` appended to their BibTeX family names. Explain `* Equal contribution · † Corresponding authors` once on the Publications page, not in each entry or on the homepage. Mark equal contributors with `*` appended to their BibTeX family names only when the user specifies which authors contributed equally.
+- Display Jiayan Fu in bold without an underline. Keep full author lists and readable spacing; do not reserve an empty thumbnail column for papers without previews.

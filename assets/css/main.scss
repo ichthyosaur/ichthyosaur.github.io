@@ -61,3 +61,44 @@ html[data-theme="dark"] {
 .post-header > h1.post-title:has(> .font-weight-bold) {
   font-weight: 700;
 }
+
+.publications ol.bibliography li .author > em {
+  font-weight: 700;
+  font-style: normal;
+  border-bottom: none;
+  text-decoration: none;
+}
+
+// Give selected papers the full content width below the profile image.
+#selected-publications {
+  clear: both;
+  padding-top: 0.75rem;
+}
+
+.publications ol.bibliography li {
+  margin-bottom: 1.75rem;
+
+  .row:not(:has(.abbr img, .abbr video, .abbr abbr)) {
+    > .abbr {
+      display: none;
+    }
+
+    > [id] {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
+  .title {
+    margin-bottom: 0.45rem;
+  }
+
+  .author {
+    line-height: 1.65;
+    margin-bottom: 0.4rem;
+  }
+
+  .periodical + .periodical {
+    margin-top: 0.5rem;
+  }
+}
