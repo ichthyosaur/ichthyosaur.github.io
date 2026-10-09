@@ -92,6 +92,8 @@ All seven `test/integration_*.sh` scripts are gated by `unit-tests.yml`; run the
 
 ## Personal publication conventions
 
+- Permanently hold the draft "Beyond the MDP Formalism: A Martingale View of LLM Generation" in `local/held-posts/2026-09-27-martingale-view-of-llm-generation.md` (gitignored). Do not publish, stage, commit, push, or restore it to `_posts` unless the user explicitly authorizes publishing this specific article. Generic requests to push or publish do not lift this hold.
+
 - Keep publication entries in `_bibliography/papers.bib`. Add a paper to homepage Selected Publications (`selected = {true}`) only when the user explicitly requests it; otherwise use `selected = {false}`.
 - Mark corresponding authors with `†` appended to their BibTeX family names. Explain `* Equal contribution · † Corresponding authors` once on the Publications page, not in each entry or on the homepage. Mark equal contributors with `*` appended to their BibTeX family names only when the user specifies which authors contributed equally.
 - Display Jiayan Fu in bold without an underline. Keep full author lists and readable spacing; do not reserve an empty thumbnail column for papers without previews.
