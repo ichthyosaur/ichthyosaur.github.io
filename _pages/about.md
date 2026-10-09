@@ -26,6 +26,8 @@ My recent work mainly focuses on credit assignment in long-horizon tasks.
 
 I am always happy to discuss research ideas in reinforcement learning for LLMs. You can reach me at [fujiayan@live.com](mailto:fujiayan@live.com).
 
+<div class="about-details" markdown="1">
+
 <h2 id="selected-publications">Selected Papers</h2>
 
 {% include selected_papers.liquid %}
@@ -54,3 +56,5 @@ We prove that three regularity conditions—Completeness, Prefix Consistency, an
 April 2026 – Present
 
 My work mainly focuses on agentic reinforcement learning, especially its algorithms.
+
+</div>

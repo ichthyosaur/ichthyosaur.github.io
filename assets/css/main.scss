@@ -69,7 +69,27 @@ html[data-theme="dark"] {
   text-decoration: none;
 }
 
-// Give selected papers the full content width below the profile image.
+// Keep homepage sections within the text column beside the profile.
+.about-details {
+  clear: both;
+
+  .publications .row {
+    margin-left: 0;
+    margin-right: 0;
+
+    > [id] {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}
+
+@media (min-width: 576px) {
+  .about-details {
+    width: calc(70% - 1rem);
+  }
+}
+
 #selected-publications + .publications #fu2026pact .title {
   font-size: 1.3rem;
   font-weight: 700;
