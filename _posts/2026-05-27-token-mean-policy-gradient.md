@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Why Token-Mean Aggregation Is Asymptotically Unbiased"
+title: "Token-Mean Aggregation Is Asymptotically Unbiased"
 date: 2026-05-27 12:00:00 +0800
 description: "How the law of large numbers explains the asymptotic unbiasedness of token-mean aggregation, up to a positive gradient scale."
 tags: [Reinforcement Learning, LLM, DAPO, GRPO]

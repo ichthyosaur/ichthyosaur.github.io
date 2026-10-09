@@ -33,7 +33,7 @@ I am always happy to discuss research ideas in reinforcement learning for LLMs. 
 ## Selected Blogs
 
 - [Why Normalize GRPO Advantages? A Variance-Stabilizing Perspective]({% post_url 2026-08-03-grpo-variance-stabilization %}) — August 3, 2026
-- [Why Token-Mean Aggregation Is Asymptotically Unbiased]({% post_url 2026-05-27-token-mean-policy-gradient %}) — May 27, 2026
+- [Token-Mean Aggregation Is Asymptotically Unbiased]({% post_url 2026-05-27-token-mean-policy-gradient %}) — May 27, 2026
 
 ## Experience
 
@@ -43,3 +43,5 @@ I am always happy to discuss research ideas in reinforcement learning for LLMs. 
 </div>
 
 April 2026 – Present
+
+My work mainly focuses on agentic reinforcement learning, especially its algorithms.
