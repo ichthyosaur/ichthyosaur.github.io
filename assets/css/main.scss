@@ -69,6 +69,13 @@ html[data-theme="dark"] {
   text-decoration: none;
 }
 
+// Match math to the body size instead of MathJax's automatic enlargement.
+.post mjx-container[jax="CHTML"] {
+  font-size: 100% !important;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
 // Keep homepage sections within the text column beside the profile.
 .about-details {
   clear: both;
