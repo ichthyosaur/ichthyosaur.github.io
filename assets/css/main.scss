@@ -62,6 +62,10 @@ html[data-theme="dark"] {
   font-weight: 700;
 }
 
+#navbar .navbar-brand.title {
+  font-weight: 700 !important;
+}
+
 .publications ol.bibliography li .author > em {
   font-weight: 700;
   font-style: normal;
