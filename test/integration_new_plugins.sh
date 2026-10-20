@@ -17,7 +17,7 @@ build() {
   local name="$1"
   shift
   local out="${tmp_dir}/site-${name}"
-  bundle exec jekyll build "$@" -d "${out}" >/dev/null
+  bundle exec jekyll build --plugins test/fixtures/plugins "$@" -d "${out}" >/dev/null
   echo "${out}"
 }
 
@@ -30,7 +30,7 @@ fail() {
 
 default_site="$(build default)"
 
-rtl_page="${default_site}/blog/2022/rtl/index.html"
+rtl_page="${default_site}/integration-fixtures/rtl/index.html"
 [ -f "${rtl_page}" ] || fail "RTL demo post was not built"
 
 # dir must sit on <html>, not on a wrapper: that is what the browser's bidi
@@ -49,7 +49,7 @@ grep -q 'assets/al_rtl/css/rtl.css' "${default_site}/index.html" && fail "home p
 
 # --- al_marimo --------------------------------------------------------------
 
-marimo_page="${default_site}/blog/2025/marimo/index.html"
+marimo_page="${default_site}/integration-fixtures/marimo/index.html"
 [ -f "${marimo_page}" ] || fail "marimo demo post was not built"
 
 grep -q 'assets/al_marimo/js/marimo-snippets.js' "${marimo_page}" || fail "marimo post does not load the runtime"

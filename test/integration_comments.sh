@@ -11,6 +11,7 @@ cleanup() {
 trap cleanup EXIT
 
 cat >"${tmp_override}" <<'YAML'
+disqus_shortname: integration-test
 giscus:
   repo: alshedivat/al-folio
   repo_id: R_kgDOExample
@@ -18,10 +19,10 @@ giscus:
   category_id: DIC_kwDOExample
 YAML
 
-bundle exec jekyll build --config "_config.yml,${tmp_override}" -d "${tmp_site}" >/dev/null
+bundle exec jekyll build --plugins test/fixtures/plugins --config "_config.yml,${tmp_override}" -d "${tmp_site}" >/dev/null
 
-giscus_page="${tmp_site}/blog/2022/giscus-comments/index.html"
-disqus_page="${tmp_site}/blog/2015/disqus-comments/index.html"
+giscus_page="${tmp_site}/integration-fixtures/giscus/index.html"
+disqus_page="${tmp_site}/integration-fixtures/disqus/index.html"
 
 grep -q 'https://giscus.app/client.js' "${giscus_page}"
 if grep -q 'giscus comments misconfigured' "${giscus_page}"; then
